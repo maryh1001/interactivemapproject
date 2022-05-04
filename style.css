@@ -1,1 +1,6 @@
 /*  add css as needed  */
+
+#map {
+  height: 400px;
+  width: 400px;
+}

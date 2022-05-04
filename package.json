@@ -1,0 +1,23 @@
+{
+  "name": "interactive-map-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maryh1001/interactivemapproject.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maryh1001/interactivemapproject/issues"
+  },
+  "homepage": "https://github.com/maryh1001/interactivemapproject#readme",
+  "dependencies": {
+    "module": "^1.2.5",
+    "require": "^2.4.20"
+  }
+}
