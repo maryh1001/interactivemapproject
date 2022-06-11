@@ -1,4 +1,8 @@
-async function getFoursquare(coords) {
+let globalMap;
+let selection;
+let userCoords;
+
+async function getFoursquare(coords, userSelection) {
   const options = {
     method: "GET",
     headers: {
@@ -6,17 +10,26 @@ async function getFoursquare(coords) {
       Authorization: "fsq3wLy0Kn+JWkmGuQO4Ax4+9hb3oUjV7NRatNK2pIq84pE=",
     },
   };
-  console.log("before fetch...");
-  fetch(
-    `https://api.foursquare.com/v3/places/search`,
-    // `https://api.foursquare.com/v3/places/search?query=coffee&ll=${coords[0]},${coords[1]}&limit=5`,
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => console.log("res", response))
-    .catch((err) => console.error(err));
-  console.log("after fetch...");
+  
+fetch(`https://api.foursquare.com/v3/places/search?query=${userSelection}&ll=${coords[0]},${coords[1]}&radius=5000&limit=5`, options)
+.then(response => response.json())
+.then(response => {
+    console.log(response.results)
+    response.results.forEach(function (element){
+      console.log(element)
+      const coordinates = [ element.geocodes.main.latitude, element.geocodes.main.longitude ];
+      const businessMarker = L.marker(coordinates)
+      businessMarker.addTo(globalMap)
+    })
+  })
+  .catch(err => console.error(err));
+  
 }
+let click = document.querySelector("#business");
+click.addEventListener("change", function(event){
+ selection = event.target.value
+ getFoursquare(userCoords, selection)
+})
 
 async function getCoords() {
   const pos = await new Promise((resolve, reject) => {
@@ -28,8 +41,10 @@ async function getCoords() {
 
 window.onload = async () => {
   const coords = await getCoords();
+  userCoords = coords
   const map = L.map("map", { center: coords, zoom: 11 });
-
+  globalMap = map;
+  console.log(coords)
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}", {
     foo: "bar",
     attribution:
@@ -38,24 +53,7 @@ window.onload = async () => {
   const marker = L.marker(coords);
   marker.addTo(map).bindPopup("<p1><b>You are Here</b></p1>").openPopup();
 
-  getFoursquare(coords);
+ 
+
 };
 
-// const options = {
-//   method: "GET",
-//   headers: {
-//     Accept: "application/json",
-//     Authorization: "fsq3wLy0Kn+JWkmGuQO4Ax4+9hb3oUjV7NRatNK2pIq84pE=",
-//   },
-// };
-// let limit = 5;
-// let lat = myMap.coordinates[0];
-// let lon = myMap.coordinates[1];
-// let response = await fetch(
-//   `https://cors-anywhere.herokuapp.com/https://api.foursquare.com/v3/places/search?&query=${business}&limit=${limit}&ll=${lat}%2C${lon}`,
-//   options
-// );
-// let data = await response.text();
-// let parsedData = JSON.parse(data);
-// let businesses = parsedData.results;
-// return businesses;
